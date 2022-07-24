@@ -1,0 +1,60 @@
+#version: '3.4'
+
+#services:
+#  metmoitime:
+#    image: postgres:13
+#    build:
+#      context: .
+#      dockerfile: metmoitime/Dockerfile
+#    environment:
+#      POSTGRES_USER: admin
+#      POSTGRES_PASSWORD: Nodaigia1909@
+#      POSTGRES_DB: SampleDatabase
+#    ports:
+#      - "5432:5432"
+#    restart: unless-stopped
+
+#volumes:
+#  database-data:
+
+version: '3.5'
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      #POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Nodaigia1909@
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  metmoitime:
+    networks: 
+      - postgres 
+    ports:
+      - 8080:80
+    build:
+        context: .
+        dockerfile: metmoitime/Dockerfile
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+
+
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  postgres:
+    name: postgres
+
